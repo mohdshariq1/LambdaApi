@@ -1,0 +1,236 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Metadata": {
+        "AWS::CloudFormation::Designer": {
+            "87e4ec2c-7f21-4b31-8b38-9babc7f5f139": {
+                "size": {
+                    "width": 90,
+                    "height": 90
+                },
+                "position": {
+                    "x": 120,
+                    "y": 150
+                },
+                "z": 1,
+                "embeds": [],
+                "dependson": [
+                    "62b7fcde-5b22-4560-9f7e-7510b6dad211"
+                ]
+            },
+            "62b7fcde-5b22-4560-9f7e-7510b6dad211": {
+                "size": {
+                    "width": 90,
+                    "height": 90
+                },
+                "position": {
+                    "x": 360,
+                    "y": 60
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "6f8814c7-f2ec-4acb-bc60-157242ccc9cc": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 270,
+                    "y": 300
+                },
+                "z": 1,
+                "embeds": [],
+                "iscontainedinside": [
+                    "62b7fcde-5b22-4560-9f7e-7510b6dad211"
+                ],
+                "dependson": [
+                    "87e4ec2c-7f21-4b31-8b38-9babc7f5f139",
+                    "d6f6c0e1-7588-4b9d-9df0-a1daa6bb8486"
+                ]
+            },
+            "d6f6c0e1-7588-4b9d-9df0-a1daa6bb8486": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 510,
+                    "y": 210
+                },
+                "z": 1,
+                "embeds": [],
+                "isassociatedwith": [
+                    "f38bcd5a-2f34-4281-89b5-b66c1d39e713"
+                ]
+            },
+            "f38bcd5a-2f34-4281-89b5-b66c1d39e713": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 240,
+                    "y": 90
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "f76bf35c-7b4f-4e0a-83ab-5d20add548c2": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": -222.28287790311057,
+                    "y": 97.7935301453351
+                },
+                "z": 0
+            }
+        }
+    },
+    "Resources": {
+        "AGR3OUGR": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "AGRA500PF"
+                },
+                "ParentId": {
+                    "Fn::GetAtt": [
+                        "AGRA500PF",
+                        "RootResourceId"
+                    ]
+                },
+                "PathPart": "divide"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "87e4ec2c-7f21-4b31-8b38-9babc7f5f139"
+                }
+            },
+            "DependsOn": [
+                "AGRA500PF"
+            ]
+        },
+        "AGRA500PF": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+                "Name": "CalculationApi21"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "62b7fcde-5b22-4560-9f7e-7510b6dad211"
+                }
+            }
+        },
+        "AGMSNHY": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+                "AuthorizationType": "NONE",
+                "HttpMethod": "POST",
+                "ResourceId": {
+                    "Ref": "AGR3OUGR"
+                },
+                "RestApiId": {
+                    "Ref": "AGRA500PF"
+                },
+                "Integration": {
+                    "Type": "AWS",
+                    "IntegrationHttpMethod": "POST",
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": 200
+                        }
+                    ],
+                    "Uri": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "arn:aws:apigateway:",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                ":lambda:path/2015-03-31/functions/",
+                                {
+                                    "Fn::GetAtt": [
+                                        "LF492BW",
+                                        "Arn"
+                                    ]
+                                },
+                                "/invocations"
+                            ]
+                        ]
+                    }
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": 200
+                    }
+                ]
+            },
+            "DependsOn": [
+                "LF492BW",
+                "AGR3OUGR",
+                "LP4JW8D"
+            ],
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "6f8814c7-f2ec-4acb-bc60-157242ccc9cc"
+                }
+            }
+        },
+		
+		"LP4JW8D": {
+			"Type": "AWS::Lambda::Permission",
+			"Properties": {
+				"FunctionName": { "Fn::GetAtt": [ "LF492BW", "Arn" ] },
+				"Action": "lambda:InvokeFunction",
+				"Principal": "apigateway.amazonaws.com",
+				"SourceArn": { "Fn::Join": [ "", [
+					"arn:aws:execute-api:",
+					{ "Ref": "AWS::Region" }, ":",
+					{ "Ref": "AWS::AccountId" }, ":",
+					{ "Ref": "AGRA500PF" },
+					"/*/*/*"
+				] ] }
+			}
+		},
+				"LF492BW": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+                "Code": {
+                    "S3Bucket": "my-s31-ms-pw-home",
+                    "S3Key": "demoWithAPI-1.0.0.jar"
+                },
+                "FunctionName": "SimpleApiRequest",
+                "Handler": "com.amazonaws.lambda.demo.RequestAPIFunctionHandler",
+                "MemorySize": 128,
+                "Role": "arn:aws:iam::711339529572:role/lambda_basic_execution",
+                "Runtime": "java8"
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "f38bcd5a-2f34-4281-89b5-b66c1d39e713"
+                }
+            }
+        },
+        "AGD1QCCT": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+                "RestApiId": {
+                    "Ref": "AGRA500PF"
+                },
+                "Description": "First Deployment",
+                "StageName": "StagingStage"
+            },
+            "DependsOn": [
+                "AGMSNHY"
+            ],
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "f76bf35c-7b4f-4e0a-83ab-5d20add548c2"
+                }
+            }
+        }
+    }
+}
